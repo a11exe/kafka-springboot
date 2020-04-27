@@ -1,13 +1,13 @@
-package com.alllexe.libraryeventconsumer;
+package com.alllexe.libraryeventsconsumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LibraryEventConsumerApplication {
+public class LibraryEventsConsumerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LibraryEventConsumerApplication.class, args);
+		SpringApplication.run(LibraryEventsConsumerApplication.class, args);
 	}
 
 }
