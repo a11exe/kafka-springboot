@@ -8,7 +8,6 @@ import com.alllexe.LibraryEventsProducerApplication;
 import com.alllexe.domain.Book;
 import com.alllexe.domain.LibraryEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
@@ -43,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestPropertySource(properties = {
         "spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
         "spring.kafka.admin.bootstrap.servers=${spring.embedded.kafka.brokers}"})
-@Slf4j
 public class LibraryEventsControllerIntegrationTest {
 
     @Autowired
