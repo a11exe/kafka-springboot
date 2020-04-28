@@ -14,6 +14,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class LibraryEventsService {
@@ -32,10 +34,21 @@ public class LibraryEventsService {
                 save(libraryEvent);
                 break;
             case UPDATE:
-                // TODO update library event
+                validate(libraryEvent);
+                save(libraryEvent);
                 break;
         }
 
+    }
+
+    private void validate(LibraryEvent libraryEvent) {
+        if (libraryEvent.getLibraryEventId() == null) {
+            throw new IllegalArgumentException("Library id is missing");
+        }
+        Optional<LibraryEvent> byId = libraryEventsRepository.findById(libraryEvent.getLibraryEventId());
+        if (!byId.isPresent()) {
+            throw new IllegalArgumentException("Library event with id " + libraryEvent.getLibraryEventId() + " doesn't exist");
+        }
     }
 
     private void save(LibraryEvent libraryEvent) {
