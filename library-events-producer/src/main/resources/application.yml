@@ -20,4 +20,4 @@ spring:
         key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
         value-serializer: org.apache.kafka.common.serialization.StringSerializer
     template:
-      default-topic: libray-events
+      default-topic: library-events
