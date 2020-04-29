@@ -3,7 +3,7 @@
  * @version 1
  * @since 27.04.2020
  */
-package com.alllexe.controllet;
+package com.alllexe.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

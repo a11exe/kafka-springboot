@@ -1,11 +1,10 @@
-package controller;/*
+package com.alllexe.controller;/*
  * @author Alexander Abramov (alllexe@mail.ru)
  * @version 1
  * @since 27.04.2020
  */
 
 import com.alllexe.LibraryEventsProducerApplication;
-import com.alllexe.controllet.EventsController;
 import com.alllexe.domain.Book;
 import com.alllexe.domain.LibraryEvent;
 import com.alllexe.producer.LibraryEventProducer;

@@ -1,4 +1,4 @@
-/*
+package com.alllexe.controller;/*
  * @author Alexander Abramov (alllexe@mail.ru)
  * @version 1
  * @since 25.04.2020

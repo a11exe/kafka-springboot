@@ -3,7 +3,7 @@
  * @version 1
  * @since 24.04.2020
  */
-package com.alllexe.controllet;
+package com.alllexe.controller;
 
 import com.alllexe.domain.LibraryEvent;
 import com.alllexe.domain.LibraryEventType;

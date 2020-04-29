@@ -3,7 +3,7 @@
  * @version 1
  * @since 27.04.2020
  */
-package producer;
+package com.alllexe.producer;
 
 import com.alllexe.domain.Book;
 import com.alllexe.domain.LibraryEvent;
