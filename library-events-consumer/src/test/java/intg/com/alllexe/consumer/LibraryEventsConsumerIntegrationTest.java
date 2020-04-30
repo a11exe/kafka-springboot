@@ -155,8 +155,9 @@ public class LibraryEventsConsumerIntegrationTest {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         countDownLatch.await(3, TimeUnit.SECONDS);
 
-        verify(libraryEventsConsumer, times(3)).onMessage(isA(ConsumerRecord.class));
-        verify(libraryEventsService, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
+        verify(libraryEventsConsumer, times(4)).onMessage(isA(ConsumerRecord.class));
+        verify(libraryEventsService, times(4)).processLibraryEvent(isA(ConsumerRecord.class));
+        verify(libraryEventsService, times(1)).handleRecovery(isA(ConsumerRecord.class));
 
         Optional<LibraryEvent> libraryEventsDb = libraryEventsRepository.findById(libraryEvent.getLibraryEventId());
         assertFalse(libraryEventsDb.isPresent());

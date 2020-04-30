@@ -13,7 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.Optional;
 
@@ -26,6 +30,9 @@ public class LibraryEventsService {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    KafkaTemplate<Integer, String> kafkaTemplate;
 
 
     public void processLibraryEvent(ConsumerRecord<Integer, String> consumerRecord) throws JsonProcessingException {
@@ -65,4 +72,32 @@ public class LibraryEventsService {
         libraryEventsRepository.save(libraryEvent);
         log.info("Successfully persisted library event {}", libraryEvent);
     }
+
+    public void handleRecovery(ConsumerRecord<Integer, String> consumerRecord) {
+        Integer key = consumerRecord.key();
+        String message = consumerRecord.value();
+        ListenableFuture<SendResult<Integer, String>> listenableFuture = kafkaTemplate.sendDefault(key, message);
+        listenableFuture.addCallback(new ListenableFutureCallback<>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                handleFailure(key, message, ex);
+            }
+
+            @Override
+            public void onSuccess(SendResult<Integer, String> result) {
+                handleSuccess(key, message, result);
+            }
+        });
+    }
+
+    private void handleFailure(Integer key, String value, Throwable ex) {
+        log.error("Message sent fails for the key {} value {}, exception is {}",
+                key, value, ex.getMessage());
+    }
+
+    private void handleSuccess(Integer key, String value, SendResult<Integer, String> result) {
+        log.info("Message sent successfully for the key {} value {}, partition is {}",
+                key, value, result.getRecordMetadata().partition());
+    }
+
 }

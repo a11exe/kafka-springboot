@@ -5,7 +5,10 @@
  */
 package com.alllexe.libraryeventsconsumer.config;
 
+import com.alllexe.libraryeventsconsumer.service.LibraryEventsService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,6 @@ import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -27,6 +29,9 @@ import java.util.Map;
 @Slf4j
 public class LibraryEventsConsumerConfig {
 
+    @Autowired
+    LibraryEventsService libraryEventsService;
+
     @Bean
     ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory(
             ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
@@ -38,6 +43,22 @@ public class LibraryEventsConsumerConfig {
             log.info("Exception {} in data {}", thrownException.getMessage(), data);
         });
         factory.setRetryTemplate(retryTemplate());
+        factory.setRecoveryCallback((context -> {
+            if (context.getLastThrowable().getCause() instanceof RecoverableDataAccessException) {
+                log.info("inside recoverable exception");
+//                Arrays.asList(context.attributeNames())
+//                        .forEach(attribute -> {
+//                            log.info("Attribute name is {}", attribute);
+//                            log.info("Attribute value is {}", context.getAttribute(attribute));
+//                        });
+                ConsumerRecord<Integer, String> consumerRecord = (ConsumerRecord<Integer, String>) context.getAttribute("record");
+                libraryEventsService.handleRecovery(consumerRecord);
+            } else {
+                log.info("inside non recoverable exception");
+                throw new RuntimeException(context.getLastThrowable().getMessage());
+            }
+            return null;
+        }));
         //factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
