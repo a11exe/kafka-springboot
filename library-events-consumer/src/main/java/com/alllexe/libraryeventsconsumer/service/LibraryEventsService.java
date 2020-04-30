@@ -33,6 +33,11 @@ public class LibraryEventsService {
 
         log.info("Library ivent {}", libraryEvent);
 
+        if (libraryEvent.getLibraryEventId() != null && libraryEvent.getLibraryEventId() == 0) {
+            log.info("temporary network issue");
+            throw new RecoverableDataAccessException("temporary network issue");
+        }
+
         switch (libraryEvent.getLibraryEventType()) {
             case NEW:
                 save(libraryEvent);
